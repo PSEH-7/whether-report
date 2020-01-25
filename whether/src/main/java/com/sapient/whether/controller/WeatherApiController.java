@@ -83,6 +83,10 @@ public class WeatherApiController {
                 response.setDay(map.get("isRainDay").toString());
                 response.setPrediction("Temperatures is  above 40 degree celsius.");
                 response.setMessage("Use sunscreen lotion");
+            } else {
+                response.setDay(entries.get(0).getTimestamp().toString());
+                response.setPrediction("Sunny day.");
+                response.setMessage("'Enjoy the today's whether.");
             }
             response.setTemperature(temperature);
         } catch (Exception ex) {
