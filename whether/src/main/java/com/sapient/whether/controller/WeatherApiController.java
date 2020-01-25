@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/weather")
@@ -56,16 +53,19 @@ public class WeatherApiController {
 
             Instant time = Instant.ofEpochMilli(threeDayTime * 1000);
 
+            Map<String, Object> map = new HashMap<>();
             boolean isSunDay = false;
             boolean isRainDay = false;
             for (WeatherEntry weatherEntry : entries) {
                 tempList.add(weatherEntry.getTemperature());
                 if (weatherEntry.getTemperature() - celsiusTempConversion > 40) {
                     isSunDay = true;
+                    map.put("isSunDay", weatherEntry.getTimestamp());
                 }
 
                 if (weatherEntry.getRain() != null) {
                     isRainDay = true;
+                    map.put("isRainDay", weatherEntry.getTimestamp());
                 }
             }
             if (tempList != null && !tempList.isEmpty()) {
@@ -76,14 +76,13 @@ public class WeatherApiController {
 
             // check for rain season
             if (isRainDay) {
+                response.setDay(map.get("isRainDay").toString());
                 response.setPrediction("Rain is predicted");
                 response.setMessage("Carry umbrella'.");
             } else if (isSunDay) {
+                response.setDay(map.get("isRainDay").toString());
                 response.setPrediction("Temperatures is  above 40 degree celsius.");
                 response.setMessage("Use sunscreen lotion");
-            } else {
-                response.setPrediction("Sunny day.");
-                response.setMessage("'Enjoy the today's whether.");
             }
             response.setTemperature(temperature);
         } catch (Exception ex) {
@@ -104,5 +103,4 @@ public class WeatherApiController {
         Long threeDayTime = c.getTime().getTime();
         System.out.println(c.getTime().getTime());
     }
-
 }
